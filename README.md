@@ -1,273 +1,289 @@
-# AI WeatherWise Backend API
+# AI WeatherWise
 
-> **Naan Muthalvan Project Submission**  
-> **Domain**: Full Stack Web Development (Backend / RESTful Services & AI Integration)
-
-AI WeatherWise is a production-ready, secure RESTful API built with **Node.js, Express.js, MongoDB, and Google Gemini AI**. It provides user authentication via JWT, favorite location management, real-time weather information, and contextual AI-powered weather summaries and lifestyle recommendations.
+A modern, production-ready RESTful Backend API integrating real-time weather analytics with Google Gemini Generative AI, secure JWT user authentication, and persistent favorite locations management.
 
 ---
 
-## Table of Contents
-1. [Problem Statement](#problem-statement)
-2. [Solution](#solution)
-3. [Key Features](#key-features)
-4. [Technology Stack](#technology-stack)
-5. [System Architecture](#system-architecture)
-6. [API Endpoints Reference](#api-endpoints-reference)
-7. [Environment Configuration](#environment-configuration)
-8. [Installation & Setup](#installation--setup)
-9. [Running the Application](#running-the-application)
-10. [Automated Testing](#automated-testing)
-11. [Postman API Testing Guide](#postman-api-testing-guide)
-12. [Muthalvan Project Demonstration Flow](#muthalvan-project-demonstration-flow)
-13. [Project Demo Video](#project-demo-video)
+## Project Description
+
+**AI WeatherWise** is a full-featured backend application built using Node.js, Express.js, MongoDB, and Google Gemini AI. The API offers a secure, modular platform where registered users can query live weather metrics across global cities, save and manage their favorite locations, and receive human-centric AI-generated weather summaries and personalized clothing and activity recommendations.
 
 ---
 
 ## Problem Statement
-Standard weather forecasting tools provide raw numerical metrics—such as temperature, humidity percentages, and wind velocity—which often lack contextual relevance. Everyday users struggle to translate raw meteorological data into actionable daily decisions such as what to wear, whether outdoor activities are advisable, and when hydration or sun protection is necessary. Additionally, users need a centralized, authenticated platform to store their preferred locations and receive tailored guidance.
+
+Conventional weather applications present raw numerical data—such as temperature in Celsius, humidity percentages, and atmospheric pressure. For everyday users, interpreting these metrics to make practical daily decisions (e.g., what clothes to wear, whether outdoor exercise is recommended, or when extra hydration/sun protection is critical) is often cumbersome. Furthermore, users require a centralized and protected system to store preferred geographic locations and receive personalized insights tailored to current atmospheric conditions.
 
 ---
 
 ## Solution
-**AI WeatherWise** solves this gap by combining real-time meteorological metrics with Google Gemini Generative AI:
-- **Actionable Insights**: Translates numerical conditions into concise, natural-language weather summaries and personalized recommendations (clothing, health precautions, hydration, and outdoor planning).
-- **Secure Personalization**: Implements token-based JWT authentication and bcrypt password hashing to safeguard user accounts and isolate favorite cities per user.
-- **High Resilience**: Designed with graceful fallbacks for external APIs (weather and AI) and offline database resilience so the API never crashes during reviews or demonstrations.
+
+**AI WeatherWise** bridges the gap between raw meteorological data and everyday life by combining live OpenWeatherMap services with Google Gemini Generative AI:
+- **Intelligent Weather Summaries**: Converts meteorological conditions into concise, natural-language synopses that describe current conditions accurately.
+- **Context-Aware Recommendations**: Uses Gemini AI to produce practical, actionable lifestyle advice (e.g., hydration reminders, clothing choices, and outdoor precautions).
+- **Secure Architecture**: Enforces stateless JWT authentication and bcrypt password hashing to isolate and safeguard user data and saved cities.
+- **Production Resilience**: Features built-in fallback mechanisms and centralized error handling ensuring uninterrupted service even under external network or API constraints.
 
 ---
 
-## Key Features
-- **User Authentication & Authorization**:
-  - Secure user registration and login with bcrypt password hashing (10 salt rounds).
-  - Stateless JWT token authentication with expiration and role support (`user`, `admin`).
-  - Strict route guards verifying `Bearer <token>` headers on private endpoints.
-- **Favorite Locations Management**:
-  - Full CRUD operations: Create, Read, Update, and Delete favorite cities.
-  - Ownership isolation: Users can only view and manage their own locations.
-  - Duplicate prevention: Compound indexing prevents duplicate cities per user.
-- **Real-Time Weather Service**:
-  - Retrieves live weather from OpenWeatherMap (temperature, humidity, wind speed, condition).
-  - Flexible query support: path parameters (`/api/weather/:city`) and query strings (`/api/weather?city=...`).
-  - Deterministic rule-based mock engine fallback if external API keys are not supplied.
-- **Google Gemini Generative AI Integration**:
-  - Synthesizes live weather conditions into natural-language weather summaries.
-  - Generates personalized recommendations for activities and clothing based on current metrics.
-  - Safe fallback generator ensures reliable testing without crashes even without an active Gemini key.
-- **Centralized Error & Health Architecture**:
-  - Standardized JSON responses with proper HTTP status codes (200, 201, 400, 401, 404, 500, 503).
-  - Dedicated `/api/health` monitoring endpoint.
-  - Safe MongoDB connection lifecycle handling.
+## Features
+
+- **User Registration**: Create new user accounts with encrypted passwords (bcrypt hashing with 10 salt rounds) and role assignment (`user`, `admin`).
+- **User Login**: Secure credential verification with issuance of signed JSON Web Tokens (JWT).
+- **JWT Authentication**: Token-based authentication verifying user identity across protected routes.
+- **Protected Routes**: Middleware guards enforcing authorization via HTTP `Bearer <token>` headers.
+- **Favorite Locations**: Full CRUD operations (Add, Retrieve, Update, Delete) allowing authenticated users to manage their favorite cities with ownership isolation.
+- **Current Weather API**: Live weather retrieval supporting both path parameters (`/api/weather/:city`) and query parameters (`/api/weather?city=...`).
+- **Gemini AI Weather Summary**: Contextual, natural-language summary generation based on city conditions and temperature metrics.
+- **Gemini AI Weather Recommendation**: Actionable clothing, activity, and health suggestions powered by Google Gemini AI.
+- **MongoDB Persistence**: Robust database persistence using Mongoose ODM with schema validations and indexing.
+- **Error Handling**: Standardized JSON error responses with meaningful HTTP status codes (200, 201, 400, 401, 404, 500, 503).
+- **REST API**: Clean, predictable RESTful conventions following standard HTTP methods and resource naming.
+- **Postman Testing**: Comprehensive pre-configured Postman collection with automated test assertions and dynamic token/ID variable handling.
 
 ---
 
-## Technology Stack
-| Layer | Technology |
-| :--- | :--- |
-| **Runtime** | Node.js (v18+) |
-| **Framework** | Express.js (v4.x) |
-| **Database** | MongoDB with Mongoose ODM (v8.x) |
-| **Authentication** | JSON Web Tokens (`jsonwebtoken`), `bcryptjs` |
-| **Generative AI** | Google Gemini API (`@google/generative-ai`) |
-| **External APIs** | OpenWeatherMap API |
-| **Middleware** | CORS, Dotenv, Express JSON Parser |
-| **Testing** | Node.js native test runner & automated HTTP suite |
-| **API Tooling** | Postman Collection v2.1 |
+## Technologies Used
+
+- **Runtime Environment**: [Node.js](https://nodejs.org/) (v18+)
+- **Web Framework**: [Express.js](https://expressjs.com/) (v4.x)
+- **Database & ODM**: [MongoDB](https://www.mongodb.com/) & [Mongoose](https://mongoosejs.com/) (v8.x)
+- **Authentication**: [JSON Web Token (JWT)](https://jwt.io/) (`jsonwebtoken`)
+- **Security & Password Hashing**: [bcryptjs](https://github.com/dcodeIO/bcrypt.js)
+- **Generative AI**: [Google Gemini API](https://aistudio.google.com/) (`@google/generative-ai`)
+- **External Weather Service**: [OpenWeatherMap API](https://openweathermap.org/api)
+- **Cross-Origin Resource Sharing**: [CORS](https://github.com/expressjs/cors)
+- **Environment Management**: [dotenv](https://github.com/motdotla/dotenv)
+- **API Testing & Automation**: Postman & Newman
 
 ---
 
-## System Architecture
+## Backend Architecture
+
+The backend follows a layered MVC-Service architecture ensuring separation of concerns:
 
 ```
-                    ┌─────────────────────────┐
-                    │      Client / Postman   │
-                    └────────────┬────────────┘
-                                 │ HTTP (REST)
-                                 ▼
-                    ┌─────────────────────────┐
-                    │      Express.js App     │
-                    │   (CORS, JSON Parser)   │
-                    └────────────┬────────────┘
-                                 │
-     ┌───────────────────┬───────┴──────────┬───────────────────┐
-     │                   │                  │                   │
-     ▼                   ▼                  ▼                   ▼
-┌─────────────┐   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│ Health &    │   │    Auth     │    │  Locations  │    │  Weather &  │
-│ System Check│   │  Controller │    │  Controller │    │ AI Insights │
-└─────────────┘   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
-                         │                  │                  │
-                         ▼                  ▼                  ▼
-                  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-                  │    User     │    │  Location   │    │ OpenWeather │
-                  │    Model    │    │    Model    │    │  & Gemini   │
-                  └──────┬──────┘    └──────┬──────┘    └─────────────┘
-                         └──────────┬───────┘
-                                    ▼
-                         ┌─────────────────────┐
-                         │   MongoDB Database  │
-                         └─────────────────────┘
+Client / Postman
+       │
+       ▼
+ Express API (app.js)
+       │
+       ▼
+ Authentication Middleware (authMiddleware.js)
+       │
+       ▼
+ Controllers (authController, locationController, weatherController, aiController)
+       │
+       ▼
+ Services (weatherService, aiService)
+       │
+       ├──► MongoDB (Users, Locations)
+       ├──► OpenWeatherMap API
+       └──► Google Gemini AI
 ```
 
 ---
 
-## API Endpoints Reference
+## Project Structure
 
-### 1. System & Health
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/` | Public | API Welcome screen, metadata, and directory |
-| `GET` | `/api/health` | Public | Server uptime, status, and MongoDB connection status |
-
-### 2. Authentication
-| Method | Endpoint | Access | Headers | Request Body | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | `Content-Type: application/json` | `{ "name", "email", "password", "role" }` | Register user and receive JWT |
-| `POST` | `/api/auth/login` | Public | `Content-Type: application/json` | `{ "email", "password" }` | Authenticate user and receive JWT |
-| `GET` | `/api/auth/profile` | Private | `Authorization: Bearer <token>` | *None* | Retrieve logged-in user profile |
-
-### 3. Favorite Locations (Protected)
-| Method | Endpoint | Access | Headers | Request Body | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/locations` | Private | `Authorization: Bearer <token>` | `{ "city", "country" }` | Add new favorite city |
-| `GET` | `/api/locations` | Private | `Authorization: Bearer <token>` | *None* | Get all favorite cities for user |
-| `PUT` | `/api/locations/:id` | Private | `Authorization: Bearer <token>` | `{ "city", "country" }` | Update a favorite city |
-| `DELETE` | `/api/locations/:id` | Private | `Authorization: Bearer <token>` | *None* | Delete a favorite city |
-
-### 4. Weather API
-| Method | Endpoint | Access | Description |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/weather/:city` | Public | Retrieve temperature, humidity, wind, condition by city name in path |
-| `GET` | `/api/weather?city=Name` | Public | Retrieve weather metrics via query parameter |
-
-### 5. AI Weather Insights (Protected)
-| Method | Endpoint | Access | Headers | Request Body | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `POST` | `/api/ai/weather-summary` | Private | `Authorization: Bearer <token>` | `{ "city", "temperature", "humidity", "condition" }` or `{ "city" }` | Generate natural-language weather summary |
-| `POST` | `/api/ai/weather-recommendation` | Private | `Authorization: Bearer <token>` | `{ "temperature", "condition" }` or `{ "city" }` | Generate personalized activity & clothing suggestions |
-
----
-
-## Environment Configuration
-The backend uses environment variables configured in `.env`. An `.env.example` file is provided:
-
-```env
-# Server Port
-PORT=5000
-
-# MongoDB Connection String (Atlas URI or Local MongoDB)
-MONGO_URI=mongodb://127.0.0.1:27017/weatherwise
-
-# JWT Secret Key
-JWT_SECRET=your_super_secret_jwt_key_12345!
-
-# OpenWeatherMap API Key
-# If left as placeholder or empty, deterministic mock weather is used
-WEATHER_API_KEY=YOUR_OPENWEATHER_API_KEY
-
-# Google Gemini API Key
-# If left as placeholder or empty, natural-language fallback generator is used
-GEMINI_API_KEY=YOUR_GEMINI_API_KEY
-
-# Optional: Gemini Model
-GEMINI_MODEL=gemini-1.5-flash
+```text
+Backend/
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── AI_WeatherWise_Postman_Collection.json
+├── postman_collection.json
+├── README.md
+├── src/
+│   ├── app.js
+│   ├── server.js
+│   ├── config/
+│   │   └── db.js
+│   ├── controllers/
+│   │   ├── aiController.js
+│   │   ├── authController.js
+│   │   ├── locationController.js
+│   │   └── weatherController.js
+│   ├── middleware/
+│   │   └── authMiddleware.js
+│   ├── models/
+│   │   ├── Location.js
+│   │   └── User.js
+│   ├── routes/
+│   │   ├── aiRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── locationRoutes.js
+│   │   └── weatherRoutes.js
+│   └── services/
+│       ├── aiService.js
+│       └── weatherService.js
+└── test/
+    └── api.test.js
 ```
 
-> **Note on Resilient Fallbacks**: If external API keys (`WEATHER_API_KEY`, `GEMINI_API_KEY`) are not provided, the API automatically generates high-quality deterministic responses so all routes remain fully operational for offline demonstration.
-
 ---
 
-## Installation & Setup
+## Environment Setup
 
-1. **Clone or navigate to the repository**:
-   ```bash
-   cd Backend
-   ```
-
-2. **Install all dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables**:
+1. Copy the sample environment file to create your local `.env`:
    ```bash
    cp .env.example .env
    ```
-   Edit `.env` with your desired configuration or MongoDB connection string.
+
+2. Open `.env` and set your configuration variables:
+   ```env
+   # Server Configuration
+   PORT=5001
+
+   # Database Configuration (Local MongoDB or MongoDB Atlas URI)
+   MONGO_URI=mongodb://127.0.0.1:27017/weatherwise
+
+   # JWT Authentication Secret
+   JWT_SECRET=your_jwt_secret_key_here
+
+   # OpenWeatherMap API Key (Free tier from https://openweathermap.org/api)
+   WEATHER_API_KEY=your_openweathermap_api_key_here
+
+   # Google Gemini API Key (From https://aistudio.google.com/)
+   GEMINI_API_KEY=your_gemini_api_key_here
+
+   # Optional: Google Gemini Model Identifier
+   GEMINI_MODEL=gemini-1.5-flash
+   ```
+
+*(Note: Never commit `.env` containing sensitive credentials to version control. It is explicitly listed in `.gitignore`.)*
 
 ---
 
-## Running the Application
+## Installation
 
-### Development Mode (with auto-reload):
+Ensure you are in the `Backend` directory, then install all project dependencies:
+
 ```bash
-npm run dev
+cd Backend
+npm install
 ```
 
-### Production Mode:
+---
+
+## Run
+
+To run the application, execute the start script defined in `package.json`:
+
+### Production Run:
 ```bash
 npm start
 ```
 
-The server will initialize on `http://localhost:5000` (or the configured `PORT`).
-
----
-
-## Automated Testing
-An automated test suite is included in `test/api.test.js` covering 31 assertions across all modules:
+### Development Run (with nodemon auto-restart):
 ```bash
-npm test
+npm run dev
 ```
 
-### Verified Test Areas:
-- Health check and API welcome metadata
-- Weather retrieval via path parameters and query strings
-- Missing parameter handling (400)
-- Route protection without token and with invalid token (401)
-- Google Gemini AI summaries and personalized recommendations
-- Bcrypt password hashing and comparePassword validation
-- JWT signing, expiration, and ID decoding
-- User and Location schema validation rules
-- Database offline resilience (503 with helpful setup instructions)
+The server will initialize on port `5001`:
+```text
+[MongoDB] Connected: 127.0.0.1
+[Server] AI WeatherWise API running on port 5001
+[Server] Base URL: http://localhost:5001
+```
 
 ---
 
-## Postman API Testing Guide
-A pre-configured collection is included: `postman_collection.json`.
+## API Endpoints
 
+### 1. Health & System
+| Method | Endpoint | Auth Required | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/` | No | API Welcome Screen, description, and available endpoints directory |
+| `GET` | `/api/health` | No | System health check and live MongoDB connectivity status |
+
+### 2. Authentication
+| Method | Endpoint | Auth Required | Request Body | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | No | `{ "name", "email", "password", "role" }` | Registers user, hashes password, returns user data & JWT token |
+| `POST` | `/api/auth/login` | No | `{ "email", "password" }` | Validates credentials and returns JWT access token |
+| `GET` | `/api/auth/profile` | **Yes (Bearer JWT)** | *None* | Retrieves the authenticated user's profile |
+
+### 3. Favorite Locations
+| Method | Endpoint | Auth Required | Request Body | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/locations` | **Yes (Bearer JWT)** | `{ "city", "country" }` | Adds a new favorite location for the authenticated user |
+| `GET` | `/api/locations` | **Yes (Bearer JWT)** | *None* | Retrieves all favorite locations saved by the user |
+| `PUT` | `/api/locations/:id` | **Yes (Bearer JWT)** | `{ "city", "country" }` | Updates an existing favorite location owned by the user |
+| `DELETE` | `/api/locations/:id` | **Yes (Bearer JWT)** | *None* | Deletes a favorite location owned by the user |
+
+### 4. Weather API
+| Method | Endpoint | Auth Required | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/weather/:city` | No | Retrieves current weather metrics (temperature, humidity, wind, condition) using city path parameter |
+| `GET` | `/api/weather?city=...` | No | Retrieves weather metrics using query parameter |
+
+### 5. AI Weather Insights
+| Method | Endpoint | Auth Required | Request Body | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/ai/weather-summary` | **Yes (Bearer JWT)** | `{ "city", "temperature", "humidity", "condition" }` or `{ "city" }` | Generates a natural-language weather summary using Gemini AI |
+| `POST` | `/api/ai/weather-recommendation` | **Yes (Bearer JWT)** | `{ "temperature", "condition" }` or `{ "city" }` | Generates actionable lifestyle, clothing, and activity recommendations |
+
+---
+
+## Postman Testing
+
+A verified, demonstration-ready Postman collection is included directly in the repository:
+- `AI_WeatherWise_Postman_Collection.json`
+- `postman_collection.json`
+
+### Import Instructions:
 1. Open **Postman**.
-2. Click **Import** and select `postman_collection.json`.
-3. The collection variables include:
-   - `base_url`: `http://localhost:5000` (or your active PORT)
-   - `token`: Automatically captured upon successful Registration or Login.
-   - `location_id`: Automatically captured when adding a favorite location.
-4. Execute the requests in the suggested sequence below.
+2. Click **Import** and select `AI_WeatherWise_Postman_Collection.json`.
+3. The collection is configured with default variable `base_url = http://localhost:5001`.
+
+### Recommended Demonstration Order:
+1. **Health Check**: Call `GET /api/health` to demonstrate system status and database connection.
+2. **Register**: Call `POST /api/auth/register` to create a new student/user account.
+3. **Login**: Call `POST /api/auth/login` to automatically capture the JWT token into `{{token}}`.
+4. **Profile**: Call `GET /api/auth/profile` with `Bearer {{token}}` to demonstrate protected route authorization.
+5. **Add Favorite Location**: Call `POST /api/locations` to add a city and automatically capture `{{location_id}}`.
+6. **Get Favorite Locations**: Call `GET /api/locations` to demonstrate user-isolated saved cities.
+7. **Weather**: Call `GET /api/weather/Chennai` or `GET /api/weather?city=Hyderabad` to fetch live weather.
+8. **AI Weather Summary**: Call `POST /api/ai/weather-summary` with token to display Gemini AI insights.
+9. **AI Weather Recommendation**: Call `POST /api/ai/weather-recommendation` to show actionable lifestyle suggestions.
 
 ---
 
-## Muthalvan Project Demonstration Flow
-Follow this recommended sequence for project demonstration and video recording:
+## GitHub Setup
 
-1. **Project Introduction**: Overview of problem statement, architecture, and technology stack.
-2. **Server Startup**: Run `npm start` in the terminal to show resilient startup and listening status.
-3. **Health Check**: Call `GET /api/health` to confirm server status.
-4. **User Registration**: Call `POST /api/auth/register` with name, email, password, and role.
-5. **User Login**: Call `POST /api/auth/login` to show bcrypt validation and JWT issuance.
-6. **JWT Route Protection**: Demonstrate that calling `GET /api/locations` without a token fails with 401.
-7. **Add Favorite Location**: Call `POST /api/locations` with bearer token to save a city.
-8. **Fetch Saved Locations**: Call `GET /api/locations` to view the user's isolated favorite cities.
-9. **Fetch Weather**: Call `GET /api/weather/Hyderabad` to retrieve real-time weather metrics.
-10. **Gemini AI Summary**: Call `POST /api/ai/weather-summary` to show natural-language weather description.
-11. **Gemini AI Recommendation**: Call `POST /api/ai/weather-recommendation` to show clothing and activity advice.
-12. **Postman Test Suite / npm test**: Run `npm test` to show 31 automated tests passing.
+To push this repository to GitHub, follow standard Git commands:
+
+```bash
+# 1. Initialize git (if not already initialized)
+git init
+
+# 2. Stage all project files (safe files governed by .gitignore)
+git add .
+
+# 3. Create your commit
+git commit -m "Final AI WeatherWise backend"
+
+# 4. Set branch to main
+git branch -M main
+
+# 5. Add remote origin (using your existing GitHub repository URL)
+git remote add origin https://github.com/boopathiraja2813-arch/AI-WeatherWise-Backend.git
+
+# 6. Push to GitHub
+git push -u origin main
+```
 
 ---
 
-## Project Demo Video
-- **Recorded Demo Video**: [Watch Demo Video on Google Drive](https://drive.google.com/your-drive-link-here)
-*(Replace the URL above with your uploaded Google Drive video demonstration link)*
+## Demo Video
+
+Demo Video:  
+[Google Drive Link - Add Here]
 
 ---
 
 ## License
-This project is developed for educational and evaluation purposes as part of the **Naan Muthalvan** program.
+
+This project is developed for academic evaluation and demonstration under the **Naan Muthalvan** program.
